@@ -2,17 +2,15 @@ package main
 
 import (
 	"net/http"
-	"os"
+	"io/ioutil"
 )
 
 func myFunc(w http.ResponseWriter,req *http.Request) {
 	path := req.URL.Path[1:]
-	f,err := os.Open(path)
-	if err == nil {
-		b := []byte{}
-		f.Read(b)
+	b,e := ioutil.ReadFile(path)
+	if e == nil {
 		w.Write(b)
-	}else {
+	}else{
 		w.Write([]byte("404,not find this path or file!"))
 	}
 //	w.Write([]byte(path))
