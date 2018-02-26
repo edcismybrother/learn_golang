@@ -114,6 +114,27 @@ func (card cardArray) Less(i,j int) bool{
 }
 func (card cardArray) Swap(i,j int) {card[i],card[j] = card[j],card[i]}
 
+func CheckHu(cards []Card) bool{
+	if len(cards)%3 != 2 {return false}
+	return false
+	
+}
+
+func Remove(slice []Card,elems ...Card) []Card{
+	isInElems := make(map[Card]bool)
+	for _,elem := range elems{
+		isInElems[elem] = true
+	}
+	w := 0
+	for _,elem := range slice{
+		if !isInElems[elem] {
+			slice[w] = elem
+			w++
+		}
+	}
+	return slice[:w]
+}
+
 func main() {
 	
 	var member int
@@ -130,7 +151,7 @@ func main() {
 	}
 	//	开始打牌
 //	isOver := false
-	
+	Contains()
 	
 
 }
