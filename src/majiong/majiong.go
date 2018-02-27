@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
-	"sort"
+//	"sort"
+	"container/list"
 )
 
 type Player struct {
@@ -152,6 +153,4 @@ func main() {
 	//	开始打牌
 //	isOver := false
 	Contains()
-	
-
 }
