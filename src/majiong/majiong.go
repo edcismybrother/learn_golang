@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"time"
 //	"sort"
-	"container/list"
+//	"container/list"
 )
 
 type Player struct {
@@ -146,11 +146,11 @@ func main() {
 	XiPai()
 	fmt.Println("发牌")
 	FaPai(ps)
-	for _, p := range ps {
-		sort.Sort(cardArray(p.HandCards))
-		fmt.Println(p)
-	}
-	//	开始打牌
-//	isOver := false
-	Contains()
+//	for _, p := range ps {
+//		sort.Sort(cardArray(p.HandCards))
+//		fmt.Println(p)
+//	}
+//	//	开始打牌
+////	isOver := false
+//	Contains()
 }
