@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
-//	"sort"
+	"sort"
 //	"container/list"
 )
 
@@ -20,7 +20,8 @@ var (
 	cards    = []Card{}
 	color    = []string{"万", "条", "筒", "字"}
 	value    = []byte{1, 2, 3, 4, 5, 6, 7, 8, 9}
-	canPlayCardPlayer Player
+	canPlayCardPlayer *Player
+	end bool =  true
 )
 
 const ()
@@ -52,7 +53,7 @@ func Init(num int) (players []Player) {
 		if i == 0 {
 			p := Player{i + 1, nameList[lens[i]], []Card{}, true}
 			players = append(players, p)
-			canPlayCardPlayer = p
+			canPlayCardPlayer = &p
 		} else {
 			p := Player{i + 1, nameList[lens[i]], []Card{}, false}
 			players = append(players, p)
@@ -101,6 +102,19 @@ func ColorToInt(s string) int{
 	}
 	return in
 }
+func IntToColor(in int) string{
+	var s string
+	if in == 1{
+		s = "万"
+	}else if in == 2{
+		s = "条"
+	}else if in == 3{
+		s = "筒"
+	}else if in == 4{
+		s = "字"
+	}
+	return s
+}
 type cardArray []Card
 
 func (card cardArray) Len() int{
@@ -136,6 +150,80 @@ func Remove(slice []Card,elems ...Card) []Card{
 	return slice[:w]
 }
 
+/**下一个出牌的玩家**/
+func nextPlayer(players *[]Player,actionPlayer *Player) *Player{
+	if actionPlayer == nil{
+//		pp :=  *players
+		return &(*players)[0]
+	}else{
+		for k,p := range *players{
+			if p.UserId == actionPlayer.UserId {
+				index := (k+1)%len(*players)
+				return &(*players)[index]
+			}
+		}
+	}
+	return nil
+}
+
+func intToCard(number int) Card{
+	value := byte(number%100)
+	color := IntToColor(number/100)
+	return Card{value , color}
+}
+
+/**检查出牌是否存在于手牌中**/
+func checkOutCard(cards *[]Card,outCard Card) bool{
+	for i := 0;i<len(*cards);i++{
+		
+		if(*cards)[i] == outCard{
+			*cards = append((*cards)[:i], (*cards)[i+1:]...)
+			return true
+		}
+	}
+//	for _,card := range &cards{
+//		if card == outCard{
+//			cards
+//			return true
+//		}
+//	}
+	return false
+}
+
+func checkHu(players *[]Player,card Card) bool{
+	return false
+}
+func checkPeng(players *[]Player,card Card) (bool,*Player){
+	for i := 0; i<len(*players);i++{
+		handCards := (*players)[i].HandCards
+		num := 0
+		for _,c := range handCards{
+			if c == card {num++}
+		}
+		if num>=2 {return true,&((*players)[i])}
+	}
+	return false,nil
+}
+func checkGang(players *[]Player,card Card) bool{
+	return false
+}
+
+func checkAction(needHu bool,needPeng bool,needGang bool,players *[]Player,card Card){
+	if needHu{
+		end := checkHu(players,card)
+		if end{return}
+	}else if needPeng{
+		end,p := checkPeng(players,card)
+		if end{
+			fmt.Println(p)
+			return
+		}
+	}else if needGang{
+		end := checkGang(players,card)
+		if end{return}
+	}
+}
+
 func main() {
 	
 	var member int
@@ -146,11 +234,29 @@ func main() {
 	XiPai()
 	fmt.Println("发牌")
 	FaPai(ps)
-//	for _, p := range ps {
-//		sort.Sort(cardArray(p.HandCards))
-//		fmt.Println(p)
-//	}
-//	//	开始打牌
-////	isOver := false
+	for _, p := range ps {
+		sort.Sort(cardArray(p.HandCards))
+		fmt.Println(p)
+	}
+	//	开始打牌
+//	isOver := false
 //	Contains()
+	var input int
+	for end == true{
+		canPlayCardPlayer = nextPlayer(&ps, canPlayCardPlayer)
+		fmt.Printf("玩家 ： %v 请出牌", canPlayCardPlayer.UserName)
+		a :  _,err := fmt.Scan(&input)
+		if err != nil{
+			fmt.Println(err)
+			return
+		}else{
+			outCard := intToCard(input)
+			if checkOutCard(&(canPlayCardPlayer.HandCards), outCard) == false{
+				fmt.Println("该outcard不存在于手牌中")
+				goto a
+			}
+			fmt.Printf("玩家：%v 打出 %v\n手牌为：%v\n", canPlayCardPlayer.UserName,outCard,canPlayCardPlayer.HandCards)
+			checkAction(true, true, true,&ps,outCard)
+		}
+	}
 }
